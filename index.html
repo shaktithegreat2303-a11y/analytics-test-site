@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Analytics Test Site</title>
+    <title>Analytics Lab – Mixpanel Dashboard</title>
 
     <!-- Mixpanel -->
     <script type="text/javascript">
@@ -39,7 +39,39 @@
     mixpanel.track("PAGE_LOAD_TEST");
     </script>
 
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+
+        .dashboard {
+            display: flex;
+            gap: 30px;
+        }
+
+        .sidebar {
+            width: 250px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        .report-area {
+            flex: 1;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+        }
+
         .company-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -48,53 +80,143 @@
         }
 
         .company {
-            padding: 30px;
-            font-size: 20px;
+            padding: 20px;
             text-align: center;
             background: #f2f2f2;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: transform 0.2s;
-        }
-
-        .company:hover {
-            transform: scale(1.1);
-            background: #e0e0e0;
         }
     </style>
 </head>
 
 <body>
-    <h1>Welcome to My Analytics Lab</h1>
-    <button id="signup-btn">Sign Up</button>
 
-    <div class="company-grid">
-        <div class="company" data-name="Meta">Meta</div>
-        <div class="company" data-name="Apple">Apple</div>
-        <div class="company" data-name="Netflix">Netflix</div>
-        <div class="company" data-name="Google">Google</div>
-        <div class="company" data-name="Amazon">Amazon</div>
-        <div class="company" data-name="Microsoft">Microsoft</div>
-        <div class="company" data-name="NVIDIA">NVIDIA</div>
-        <div class="company" data-name="Tesla">Tesla</div>
-        <div class="company" data-name="Adobe">Adobe</div>
-        <div class="company" data-name="Salesforce">Salesforce</div>
+<h1>Mixpanel Analytics Lab</h1>
+
+<button id="signup-btn">Sign Up</button>
+
+<div class="company-grid">
+    <div class="company" data-name="Meta">Meta</div>
+    <div class="company" data-name="Apple">Apple</div>
+    <div class="company" data-name="Netflix">Netflix</div>
+    <div class="company" data-name="Google">Google</div>
+    <div class="company" data-name="Amazon">Amazon</div>
+</div>
+
+<hr>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="loadReport('insights')">Insights Report</button>
+        <button onclick="loadReport('funnels')">Funnels Report</button>
+        <button onclick="loadReport('flow')">Flow Report</button>
+        <button onclick="loadReport('retention')">Retention Report</button>
+        <button onclick="loadReport('kpi')">KPI Trends</button>
     </div>
 
-    <script>
-        document.getElementById("signup-btn").addEventListener("click", function() {
-            mixpanel.track("Sign Up Clicked");
-        });
+    <!-- Main Report Area -->
+    <div class="report-area">
 
-        document.querySelectorAll(".company").forEach(function(company) {
-            company.addEventListener("click", function() {
-                const name = company.getAttribute("data-name");
-                mixpanel.track("Company Clicked", {
-                    company_name: name
-                });
-            });
+        <div class="filters">
+            <label>Date Range:</label>
+            <select id="dateRange">
+                <option value="7">Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+            </select>
+
+            <label>Event:</label>
+            <select id="eventType">
+                <option value="PAGE_LOAD_TEST">Page Load</option>
+                <option value="Sign Up Clicked">Sign Up</option>
+                <option value="Company Clicked">Company Click</option>
+            </select>
+
+            <button onclick="generateReport()">Generate</button>
+        </div>
+
+        <canvas id="reportChart"></canvas>
+
+    </div>
+
+</div>
+
+<script>
+let currentReport = "insights";
+let chartInstance;
+
+function loadReport(type) {
+    currentReport = type;
+    alert("Selected: " + type.toUpperCase() + " Report");
+}
+
+function generateReport() {
+
+    const ctx = document.getElementById('reportChart');
+
+    if(chartInstance) {
+        chartInstance.destroy();
+    }
+
+    let labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    let data;
+
+    switch(currentReport) {
+
+        case "insights":
+            data = [12,19,3,5,2,3,9];
+            break;
+
+        case "funnels":
+            labels = ["Page Load","Sign Up","Company Click"];
+            data = [100,60,30];
+            break;
+
+        case "flow":
+            labels = ["Landing","Signup","Click","Exit"];
+            data = [100,80,50,20];
+            break;
+
+        case "retention":
+            labels = ["Day 1","Day 3","Day 7","Day 14"];
+            data = [100,70,50,30];
+            break;
+
+        case "kpi":
+            data = [200,220,250,300,280,350,400];
+            break;
+    }
+
+    chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: currentReport.toUpperCase(),
+                data: data
+            }]
+        }
+    });
+}
+
+/* Event Tracking */
+
+document.getElementById("signup-btn").addEventListener("click", function() {
+    mixpanel.track("Sign Up Clicked");
+});
+
+document.querySelectorAll(".company").forEach(function(company) {
+    company.addEventListener("click", function() {
+        const name = company.getAttribute("data-name");
+        mixpanel.track("Company Clicked", {
+            company_name: name
         });
-    </script>
+    });
+});
+</script>
+
 </body>
 </html>

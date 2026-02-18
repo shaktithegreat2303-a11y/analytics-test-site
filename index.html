@@ -30,6 +30,25 @@
   <span class="icon" data-name="Upload">📤</span>
   <span class="icon" data-name="Download">📥</span>
 </div>
+<script>
+// Existing Sign Up tracking
+document.getElementById("signup-btn").addEventListener("click", function() {
+    mixpanel.track("Sign Up Clicked");
+});
+
+// Icon click tracking
+document.querySelectorAll(".icon").forEach(function(icon) {
+    icon.style.cursor = "pointer";
+    icon.style.margin = "10px";
+
+    icon.addEventListener("click", function() {
+        const iconName = icon.getAttribute("data-name");
+        mixpanel.track("Icon Clicked", {
+            icon_name: iconName
+        });
+    });
+});
+</script>
 
     <script>
 document.getElementById("signup-btn").addEventListener("click", function() {

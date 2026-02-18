@@ -18,6 +18,19 @@
 <body>
     <h1>Welcome to My Test Page</h1>
     <button id="signup-btn">Sign Up</button>
+    <div style="margin-top:20px; font-size:30px;">
+  <span class="icon" data-name="Home">🏠</span>
+  <span class="icon" data-name="Search">🔍</span>
+  <span class="icon" data-name="Cart">🛒</span>
+  <span class="icon" data-name="Heart">❤️</span>
+  <span class="icon" data-name="Star">⭐</span>
+  <span class="icon" data-name="Bell">🔔</span>
+  <span class="icon" data-name="Message">💬</span>
+  <span class="icon" data-name="Settings">⚙️</span>
+  <span class="icon" data-name="Upload">📤</span>
+  <span class="icon" data-name="Download">📥</span>
+</div>
+
     <script>
 document.getElementById("signup-btn").addEventListener("click", function() {
     mixpanel.track("Sign Up Clicked");
